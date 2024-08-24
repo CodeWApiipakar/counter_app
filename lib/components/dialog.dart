@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import "dart:math";
 
 Future<void> dialogBuilder(BuildContext context, String itemTitle,
-    String itemId, dynamic itemValue, isSelected, actionOne) {
+    String itemId, dynamic itemValue, handleChanges) {
   TextEditingController txtItemName = TextEditingController();
   TextEditingController txtItemValue = TextEditingController();
   txtItemValue.text = itemValue.toString();
@@ -17,91 +20,127 @@ Future<void> dialogBuilder(BuildContext context, String itemTitle,
     0xFF5C5C5C,
   ];
 
+  // Randomly select an initial color index
+  int selectedIndex = Random().nextInt(sColors.length);
+  var selectedColor = sColors[selectedIndex];
+
   return showDialog<void>(
     context: context,
-    barrierDismissible: false,
     builder: (BuildContext context) {
-      return Dialog(
-        child: Container(
-          width: double.infinity,
-          height: 350,
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                itemTitle,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          return Dialog(
+            child: Container(
+              width: double.infinity,
+              height: 370,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: txtItemName,
-                cursorColor: Colors.grey,
-                decoration: const InputDecoration(
-                  fillColor: Colors.grey,
-                  labelStyle: TextStyle(color: Colors.grey),
-                  focusColor: Colors.grey,
-                  hintText: "Item Name",
-                  labelText: "Item Name",
-                  suffix: Icon(Icons.edit),
-                  border: OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    itemTitle,
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: txtItemValue,
-                keyboardType: TextInputType.number,
-                cursorColor: Colors.grey,
-                decoration: const InputDecoration(
-                  fillColor: Colors.grey,
-                  labelStyle: TextStyle(color: Colors.grey),
-                  focusColor: Colors.grey,
-                  hintText: "0",
-                  labelText: "Item Value",
-                  suffix: Icon(Icons.edit),
-                  border: OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                height: 30, // Set a fixed height for the ListView
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: sColors.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        actionOne();
-                      },
-                      child: Container(
-                        width: 30,
-                        height: 30,
-                        margin: EdgeInsets.symmetric(horizontal: 4),
-                        decoration: BoxDecoration(
-                          border: isSelected == true
-                              ? Border.all(width: 2, color: Colors.grey)
-                              : null,
-                          color: Color(sColors[index]),
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
-                        ),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: txtItemName,
+                    cursorColor: Colors.grey,
+                    decoration: const InputDecoration(
+                      fillColor: Colors.grey,
+                      labelStyle: TextStyle(color: Colors.grey),
+                      focusColor: Colors.grey,
+                      hintText: "Item Name",
+                      labelText: "Item Name",
+                      suffix: Icon(Icons.edit),
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    autofocus: true,
+                    controller: txtItemValue,
+                    keyboardType: TextInputType.number,
+                    cursorColor: Colors.grey,
+                    decoration: const InputDecoration(
+                      fillColor: Colors.grey,
+                      labelStyle: TextStyle(color: Colors.grey),
+                      focusColor: Colors.grey,
+                      hintText: "",
+                      labelText: "Item Value",
+                      suffix: Icon(Icons.edit),
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    height: 30, // Set a fixed height for the ListView
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: sColors.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedIndex = index;
+                              selectedColor =
+                                  sColors[index]; // Set the selected index
+                            });
+                          },
+                          child: Container(
+                            width: 30,
+                            height: 30,
+                            margin: EdgeInsets.symmetric(horizontal: 4),
+                            decoration: BoxDecoration(
+                              border: selectedIndex == index
+                                  ? Border.all(width: 2, color: Colors.grey)
+                                  : null,
+                              color: Color(sColors[index]),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(50)),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    width: double.infinity,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: MaterialButton(
+                            padding: EdgeInsets.all(20),
+                            color: Colors.deepPurple,
+                            onPressed: () {
+                              handleChanges(txtItemName.text, txtItemValue.text,
+                                  selectedColor);
+                              Navigator.of(context).pop();
+                            },
+                            child: Text("Save"),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       );
     },
   );
