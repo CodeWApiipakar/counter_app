@@ -85,8 +85,8 @@ class _HomeState extends State<Home> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // removeOldItems();
-    getOldItems();
+    removeOldItems();
+    // getOldItems();
   }
 
 //get old items from shared Preferences.
@@ -113,6 +113,8 @@ class _HomeState extends State<Home> {
     double size;
     if (itemsLength == 2) {
       size = 200;
+    } else if (itemsLength == 1) {
+      size = 250;
     } else if (itemsLength == 3) {
       size = 160;
     } else if (itemsLength == 4) {
@@ -130,8 +132,8 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: buildAppBar(addNewItem),
       body: items.isEmpty
-          ? Center(
-              child: Text("Click + icon to create items"),
+          ? const Center(
+              child: Text("Click + icon to add new item"),
             )
           : itemsList(screenSize, items, getContainerSize(items.length)),
     );

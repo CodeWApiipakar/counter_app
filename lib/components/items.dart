@@ -1,3 +1,4 @@
+import 'package:counter/components/dialog.dart';
 import 'package:flutter/material.dart';
 
 Widget itemsList(screenSize, items, getContainerSize) {
@@ -35,7 +36,10 @@ Widget itemsList(screenSize, items, getContainerSize) {
                       style: TextStyle(fontSize: 20),
                     ),
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          // dialogBuilder(context, key, key, itemValue, handleChanges)
+                          print(items.keys.elementAt(index));
+                        },
                         icon: const Icon(
                           Icons.edit,
                         ))
