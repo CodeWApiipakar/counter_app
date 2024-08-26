@@ -1,3 +1,4 @@
+import 'package:counter/components/controls.dart';
 import 'package:counter/components/dialog.dart';
 import 'package:counter/components/items.dart';
 import 'package:counter/components/myAppBar.dart';
@@ -29,83 +30,13 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  Map<String, dynamic> items = {};
-  dynamic itemid = "";
-  int? itemValue;
-  String itemTitle = "Create new item";
-
-  void handleChanges(String newItemId, String itemValue, var itemColor) async {
-    // Retrieve SharedPreferences instance
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    // Perform the async operation outside of setState
-    Map<String, List<dynamic>> existingItems =
-        await getItemsFromSharedPreferences();
-
-    // Check if the newItemId is not empty and doesn't already exist in the map
-    if (newItemId.isNotEmpty && !existingItems.containsKey(newItemId)) {
-      // Add the new item to the map
-      existingItems[newItemId] = [itemValue, itemColor];
-
-      // Convert updated items map to JSON string and save it to SharedPreferences
-      String jsonItems = jsonEncode(existingItems);
-      await prefs.setString("items", jsonItems);
-
-      // Optionally update itemid if needed inside setState
-      setState(() {
-        itemid = newItemId;
-      });
-
-      getOldItems();
-    }
-  }
-
-// Function to get items from SharedPreferences
-  Future<Map<String, List<dynamic>>> getItemsFromSharedPreferences() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? jsonString = prefs.getString('items');
-    if (jsonString != null) {
-      Map<String, dynamic> map = jsonDecode(jsonString);
-      return map.map((key, value) => MapEntry(key, List<dynamic>.from(value)));
-    }
-    return {};
-  }
-
-  //handle add item
-  void addNewItem() {
-    setState(() {
-      var itemIdIncrement = items.length + 1;
-      itemid = "Item $itemIdIncrement";
-      itemValue = 0;
-      dialogBuilder(context, itemTitle, itemid, itemValue, handleChanges);
-    });
-  }
-
+  Controls controls = Controls();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    removeOldItems();
-    // getOldItems();
-  }
-
-//get old items from shared Preferences.
-  void getOldItems() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    var stringdata = prefs.getString('items');
-    if (stringdata != null) {
-      Map<String, dynamic> jsonObject = await jsonDecode(stringdata.toString());
-      setState(() {
-        items = jsonObject;
-      });
-    }
-    print(items);
-  }
-
-  void removeOldItems() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove("items");
+    // removeOldItems();
+    controls.getOldItems(setState);
   }
 
 //container size handler.
@@ -125,17 +56,32 @@ class _HomeState extends State<Home> {
     return size;
   }
 
+// Handle add item
+  void addNewItem() {
+    setState(() {
+      var itemIdIncrement = controls.items.length + 1;
+      controls.itemid = "Item $itemIdIncrement";
+      controls.itemValue = 0;
+      dialogBuilder(
+          context, controls.itemTitle, controls.itemid, controls.itemValue,
+          (newItemId, newValue, color) {
+        controls.handleChanges(newItemId, newValue, color, setState);
+      });
+    });
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: buildAppBar(addNewItem),
-      body: items.isEmpty
+      appBar: myAppBar(addNewItem),
+      body: controls.items.isEmpty
           ? const Center(
               child: Text("Click + icon to add new item"),
             )
-          : itemsList(screenSize, items, getContainerSize(items.length)),
+          : itemsList(screenSize, controls.items,
+              getContainerSize(controls.items.length)),
     );
   }
 }

@@ -48,11 +48,27 @@ Widget itemsList(screenSize, items, getContainerSize) {
               ),
               Container(
                 height: getContainerSize,
-                child: Center(
-                    child: Text(
-                  itemValue,
-                  style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
-                )),
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.add),
+                    ),
+                    Center(
+                      child: Text(
+                        itemValue,
+                        style: TextStyle(
+                            fontSize: 50, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.remove),
+                    ),
+                  ],
+                ),
               )
             ],
           ),

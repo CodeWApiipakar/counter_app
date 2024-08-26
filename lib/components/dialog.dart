@@ -7,9 +7,10 @@ Future<void> dialogBuilder(BuildContext context, String itemTitle,
     String itemId, dynamic itemValue, handleChanges) {
   TextEditingController txtItemName = TextEditingController();
   TextEditingController txtItemValue = TextEditingController();
-  txtItemValue.text = itemValue.toString();
+  // txtItemValue.text = itemValue.toString();
   txtItemName.text = itemId;
 
+  // txtItemValue.selection = TextSelection(baseOffset: 10, extentOffset: 15);
   List<int> sColors = [
     0xFFE10000,
     0xFFC6A700,
