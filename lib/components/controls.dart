@@ -9,7 +9,7 @@ class Controls {
   dynamic itemid = "";
   int? itemValue;
   String itemTitle = "Create new item";
-
+  int currentColor = 0;
   void handleChanges(String newItemId, String itemValue, var itemColor,
       Function updateState) async {
     // Retrieve SharedPreferences instance
@@ -37,6 +37,13 @@ class Controls {
     }
   }
 
+//update item
+  void updateItem(oldTitle, title, key, value, color) {
+    print(
+        "-------------------------------------- console --------------------------------");
+    print("Title : $title Key:$key value:$value color:$color");
+  }
+
   //get old items from shared Preferences.
   void getOldItems(Function updateState) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -48,7 +55,7 @@ class Controls {
         items = jsonObject;
       });
     }
-    print(items);
+    // print(items);
   }
 
   // Function to get items from SharedPreferences

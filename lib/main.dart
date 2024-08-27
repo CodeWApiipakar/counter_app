@@ -66,7 +66,7 @@ class _HomeState extends State<Home> {
           context, controls.itemTitle, controls.itemid, controls.itemValue,
           (newItemId, newValue, color) {
         controls.handleChanges(newItemId, newValue, color, setState);
-      });
+      }, controls.currentColor);
     });
   }
 

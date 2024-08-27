@@ -1,7 +1,10 @@
+import 'package:counter/components/controls.dart';
 import 'package:counter/components/dialog.dart';
 import 'package:flutter/material.dart';
 
 Widget itemsList(screenSize, items, getContainerSize) {
+  Controls control = Controls();
+
   return Container(
     margin: EdgeInsets.symmetric(horizontal: 15, vertical: 30),
     decoration: BoxDecoration(),
@@ -38,7 +41,8 @@ Widget itemsList(screenSize, items, getContainerSize) {
                     IconButton(
                         onPressed: () {
                           // dialogBuilder(context, key, key, itemValue, handleChanges)
-                          print(items.keys.elementAt(index));
+                          dialogBuilder(context, "Modify this item", key,
+                              itemValue, control.updateItem, colorValue);
                         },
                         icon: const Icon(
                           Icons.edit,
@@ -59,13 +63,13 @@ Widget itemsList(screenSize, items, getContainerSize) {
                     Center(
                       child: Text(
                         itemValue,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 50, fontWeight: FontWeight.bold),
                       ),
                     ),
                     IconButton(
                       onPressed: () {},
-                      icon: Icon(Icons.remove),
+                      icon: const Icon(Icons.remove),
                     ),
                   ],
                 ),

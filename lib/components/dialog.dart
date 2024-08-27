@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import "dart:math";
 
 Future<void> dialogBuilder(BuildContext context, String itemTitle,
-    String itemId, dynamic itemValue, handleChanges) {
+    String itemId, dynamic itemValue, handleChanges, colorValue) {
   TextEditingController txtItemName = TextEditingController();
   TextEditingController txtItemValue = TextEditingController();
-  // txtItemValue.text = itemValue.toString();
+  itemTitle == "Create new item"
+      ? txtItemValue.text = ""
+      : txtItemValue.text = itemValue.toString();
   txtItemName.text = itemId;
 
   // txtItemValue.selection = TextSelection(baseOffset: 10, extentOffset: 15);
@@ -22,9 +24,16 @@ Future<void> dialogBuilder(BuildContext context, String itemTitle,
   ];
 
   // Randomly select an initial color index
-  int selectedIndex = Random().nextInt(sColors.length);
-  var selectedColor = sColors[selectedIndex];
+  int selectedIndex;
+  int CurrentColor = sColors.indexOf(colorValue);
 
+  itemTitle == "Create new item"
+      ? selectedIndex = Random().nextInt(sColors.length)
+      : selectedIndex = CurrentColor;
+  var selectedColor;
+  selectedColor = sColors[selectedIndex];
+
+  // print("current color : $CurrentColor");
   return showDialog<void>(
     context: context,
     builder: (BuildContext context) {
@@ -100,7 +109,7 @@ Future<void> dialogBuilder(BuildContext context, String itemTitle,
                           child: Container(
                             width: 30,
                             height: 30,
-                            margin: EdgeInsets.symmetric(horizontal: 4),
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
                             decoration: BoxDecoration(
                               border: selectedIndex == index
                                   ? Border.all(width: 2, color: Colors.grey)
@@ -127,8 +136,11 @@ Future<void> dialogBuilder(BuildContext context, String itemTitle,
                             padding: EdgeInsets.all(20),
                             color: Colors.deepPurple,
                             onPressed: () {
-                              handleChanges(txtItemName.text, txtItemValue.text,
-                                  selectedColor);
+                              itemTitle == "Create new item"
+                                  ? handleChanges(txtItemName.text,
+                                      txtItemValue.text, selectedColor)
+                                  : handleChanges(itemId, txtItemName.text,
+                                      txtItemValue.text, selectedColor);
                               Navigator.of(context).pop();
                             },
                             child: Text("Save"),
