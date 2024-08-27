@@ -38,10 +38,10 @@ class Controls {
   }
 
 //update item
-  void updateItem(oldTitle, title, key, value, color) {
+  void updateItem(oldTitle, title, value, color) {
     print(
         "-------------------------------------- console --------------------------------");
-    print("Title : $title Key:$key value:$value color:$color");
+    print("old title : $oldTitle new Title:$title value:$value color:$color");
   }
 
   //get old items from shared Preferences.

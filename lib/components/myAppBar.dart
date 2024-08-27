@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 AppBar myAppBar(addFuntion) {
   return AppBar(
+    automaticallyImplyLeading: false,
     title: Text("Counter App"),
     actions: [
       Row(
