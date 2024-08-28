@@ -1,14 +1,23 @@
 import 'dart:convert';
 
+import 'package:counter/components/controls.dart';
 import 'package:flutter/material.dart';
 import "dart:math";
 
-Future<void> dialogBuilder(BuildContext context, String itemTitle,
-    String itemId, dynamic itemValue, handleChanges, colorValue) {
+Future<void> dialogBuilder(
+    BuildContext context,
+    String itemTitle,
+    String itemId,
+    dynamic itemValue,
+    Function handleChanges,
+    colorValue,
+    Function updateState) {
+  Controls controls = Controls();
+
   TextEditingController txtItemName = TextEditingController();
   TextEditingController txtItemValue = TextEditingController();
   itemTitle == "Create new item"
-      ? txtItemValue.text = ""
+      ? txtItemValue.text = "0"
       : txtItemValue.text = itemValue.toString();
   txtItemName.text = itemId;
 
@@ -58,6 +67,7 @@ Future<void> dialogBuilder(BuildContext context, String itemTitle,
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
+                    autofocus: itemTitle == "Create new item" && true,
                     controller: txtItemName,
                     cursorColor: Colors.grey,
                     decoration: const InputDecoration(
@@ -75,7 +85,7 @@ Future<void> dialogBuilder(BuildContext context, String itemTitle,
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
-                    autofocus: true,
+                    autofocus: itemTitle != "Create new item" && true,
                     controller: txtItemValue,
                     keyboardType: TextInputType.number,
                     cursorColor: Colors.grey,
@@ -136,15 +146,28 @@ Future<void> dialogBuilder(BuildContext context, String itemTitle,
                           child: MaterialButton(
                             padding: EdgeInsets.all(20),
                             color: Colors.deepPurple,
-                            onPressed: () {
-                              itemTitle == "Create new item"
-                                  ? handleChanges(txtItemName.text,
-                                      txtItemValue.text, selectedColor)
-                                  : handleChanges(itemId, txtItemName.text,
-                                      txtItemValue.text, selectedColor);
-                              Navigator.of(context).pop();
+                            onPressed: () async {
+                              if (itemTitle == "Create new item") {
+                                handleChanges(txtItemName.text,
+                                    txtItemValue.text, selectedColor);
+                                Navigator.of(context).pop();
+                              } else {
+                                // handleChanges(
+                                //   itemId,
+                                //   txtItemName.text,
+                                //   txtItemValue.text,
+                                //   selectedColor,
+                                // );
+                                controls.updateItem(
+                                    itemId,
+                                    txtItemName.text,
+                                    txtItemValue.text,
+                                    selectedColor,
+                                    updateState);
+                                Navigator.of(context).pop();
+                              }
                             },
-                            child: Text("Save"),
+                            child: const Text("Save"),
                           ),
                         ),
                       ],

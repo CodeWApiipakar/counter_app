@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:counter/components/controls.dart';
 import 'package:counter/components/dialog.dart';
 import 'package:counter/components/items.dart';
@@ -5,7 +7,6 @@ import 'package:counter/components/myAppBar.dart';
 import 'package:counter/screens/splashScreenOne.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 
 void main() async {
   WidgetsFlutterBinding
@@ -31,6 +32,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   Controls controls = Controls();
+  Map<String, dynamic> lastItemsUpdated = {};
   @override
   void initState() {
     // TODO: implement initState
@@ -59,14 +61,14 @@ class _HomeState extends State<Home> {
 // Handle add item
   void addNewItem() {
     setState(() {
-      var itemIdIncrement = controls.items.length + 1;
+      var itemIdIncrement = Controls.items.length + 1;
       controls.itemid = "Item $itemIdIncrement";
       controls.itemValue = 0;
       dialogBuilder(
           context, controls.itemTitle, controls.itemid, controls.itemValue,
           (newItemId, newValue, color) {
         controls.handleChanges(newItemId, newValue, color, setState);
-      }, controls.currentColor);
+      }, controls.currentColor, setState);
     });
   }
 
@@ -75,13 +77,11 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: myAppBar(addNewItem),
-      body: controls.items.isEmpty
-          ? const Center(
-              child: Text("Click + icon to add new item"),
-            )
-          : itemsList(screenSize, controls.items,
-              getContainerSize(controls.items.length)),
-    );
+        appBar: myAppBar(addNewItem),
+        body: Controls.items.isEmpty
+            ? const Center(
+                child: Text("Click + icon to add new item"),
+              )
+            : itemsList(context, setState, getContainerSize));
   }
 }

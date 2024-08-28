@@ -1,15 +1,15 @@
 import 'dart:convert';
-
 import 'package:counter/components/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Controls {
-  Map<String, dynamic> items = {};
+  static Map<String, dynamic> items = {};
   dynamic itemid = "";
   int? itemValue;
   String itemTitle = "Create new item";
   int currentColor = 0;
+
   void handleChanges(String newItemId, String itemValue, var itemColor,
       Function updateState) async {
     // Retrieve SharedPreferences instance
@@ -31,34 +31,89 @@ class Controls {
       // Optionally update itemid using the callback
       updateState(() {
         itemid = newItemId;
+        getOldItems(updateState);
       });
-
-      getOldItems(updateState);
     }
   }
 
-//update item
-  void updateItem(oldTitle, title, value, color) {
-    print(
-        "-------------------------------------- console --------------------------------");
-    print("old title : $oldTitle new Title:$title value:$value color:$color");
+//============================================ update items
+  void updateItem(String oldTitle, String title, String itemvalue, var color,
+      Function updateState) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Map<String, List<dynamic>> itemsList =
+        await getItemsFromSharedPreferences();
+
+    // Create a new map to store updated items
+    Map<String, List<dynamic>> updatedItems = {};
+
+    itemsList.forEach((key, value) {
+      if (key == oldTitle) {
+        // Update the list for the old key
+        List<dynamic> updatedList = [itemvalue, color];
+        updatedItems[title] = updatedList;
+        // Fetch and update the state again
+        getOldItems(updateState);
+      } else {
+        updatedItems[key] = value;
+      }
+    });
+
+    // Save the updated map back to shared preferences
+    String jsonItems = jsonEncode(updatedItems);
+    await prefs.setString("items", jsonItems);
+
+    updateState(() {
+      items = updatedItems;
+    });
+    getOldItems(updateState);
   }
 
-  //get old items from shared Preferences.
+  //============================================ update only value items
+  void updateOnlyValue(String title, String oldValue, String newValue,
+      Function updateState) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Map<String, List<dynamic>> itemsList =
+        await getItemsFromSharedPreferences();
+
+    // Create a new map to store updated items
+    Map<String, List<dynamic>> updatedItems = {};
+
+    itemsList.forEach((key, value) {
+      if (key == title) {
+        // Update the list for the old key
+        List<dynamic> updatedList = [newValue];
+        updatedItems[title] = updatedList;
+        // Fetch and update the state again
+        getOldItems(updateState);
+      } else {
+        updatedItems[key] = value;
+      }
+    });
+
+    // Save the updated map back to shared preferences
+    String jsonItems = jsonEncode(updatedItems);
+    await prefs.setString("items", jsonItems);
+
+    updateState(() {
+      items = updatedItems;
+    });
+    getOldItems(updateState);
+  }
+
+  //================================== get old items from shared Preferences.
   void getOldItems(Function updateState) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
     var stringdata = prefs.getString('items');
     if (stringdata != null) {
-      Map<String, dynamic> jsonObject = await jsonDecode(stringdata.toString());
+      Map<String, dynamic> jsonObject = await jsonDecode(stringdata);
       updateState(() {
         items = jsonObject;
       });
     }
-    // print(items);
+    print("Loaded items from SharedPreferences: ${items}");
   }
 
-  // Function to get items from SharedPreferences
+  //==================================Function to get items from SharedPreferences
   Future<Map<String, List<dynamic>>> getItemsFromSharedPreferences() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? jsonString = prefs.getString('items');
@@ -67,6 +122,14 @@ class Controls {
       return map.map((key, value) => MapEntry(key, List<dynamic>.from(value)));
     }
     return {};
+  }
+
+// Function to save the updated map to SharedPreferences
+  Future<void> saveToSharedPreferences(Map<String, dynamic> items) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String jsonString = jsonEncode(items); // Convert map to JSON string
+    prefs.setString('items', jsonString); // Save the JSON string
+    print(items);
   }
 
   void removeOldItems() async {

@@ -1,6 +1,8 @@
+import 'package:counter/components/controls.dart';
 import 'package:flutter/material.dart';
 
 AppBar myAppBar(addFuntion) {
+  Controls control = Controls();
   return AppBar(
     automaticallyImplyLeading: false,
     title: Text("Counter App"),
