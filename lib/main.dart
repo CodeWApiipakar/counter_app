@@ -39,6 +39,8 @@ class _HomeState extends State<Home> {
     super.initState();
     // controls.removeOldItems();
     controls.getOldItems(setState);
+    // controls.removeHistory(setState);
+    controls.loadHistory(setState);
   }
 
 //container size handler.

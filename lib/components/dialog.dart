@@ -150,19 +150,27 @@ Future<void> dialogBuilder(
                               if (itemTitle == "Create new item") {
                                 handleChanges(txtItemName.text,
                                     txtItemValue.text, selectedColor);
+                                controls.saveHistory(
+                                    txtItemName.text,
+                                    itemValue,
+                                    txtItemValue.text,
+                                    selectedColor,
+                                    "Save",
+                                    updateState);
                                 Navigator.of(context).pop();
                               } else {
-                                // handleChanges(
-                                //   itemId,
-                                //   txtItemName.text,
-                                //   txtItemValue.text,
-                                //   selectedColor,
-                                // );
                                 controls.updateItem(
                                     itemId,
                                     txtItemName.text,
                                     txtItemValue.text,
                                     selectedColor,
+                                    updateState);
+                                controls.saveHistory(
+                                    txtItemName.text,
+                                    itemValue,
+                                    txtItemValue.text,
+                                    selectedColor,
+                                    "Update",
                                     updateState);
                                 Navigator.of(context).pop();
                               }

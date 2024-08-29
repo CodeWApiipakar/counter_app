@@ -4,8 +4,14 @@ import 'package:counter/components/controls.dart';
 import 'package:flutter/material.dart';
 import "dart:math";
 
-Future<void> changeValueDialog(BuildContext context, String itemTitle,
-    String key, String itemValue, updateState) {
+Future<void> changeValueDialog(
+  BuildContext context,
+  String itemTitle,
+  String key,
+  String itemValue,
+  updateState,
+  colorValue,
+) {
   Controls controls = Controls();
   TextEditingController txtItemValue = TextEditingController();
   TextEditingController txtNewItemValue = TextEditingController();
@@ -84,6 +90,13 @@ Future<void> changeValueDialog(BuildContext context, String itemTitle,
                                         key,
                                         int.parse(txtItemValue.text),
                                         int.parse(txtNewItemValue.text),
+                                        updateState);
+                                    controls.saveHistory(
+                                        key,
+                                        itemValue,
+                                        txtNewItemValue.text,
+                                        colorValue,
+                                        "add",
                                         updateState);
                                     Navigator.of(context).pop();
                                   },

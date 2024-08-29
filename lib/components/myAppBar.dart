@@ -22,6 +22,7 @@ AppBar myAppBar(context, addFuntion, updateState) {
                 context,
                 MaterialPageRoute(builder: (context) => History()),
               );
+              control.loadHistory(updateState);
             },
             icon: Icon(Icons.history),
           ),
@@ -36,6 +37,7 @@ AppBar myAppBar(context, addFuntion, updateState) {
                 PopupMenuItem<String>(
                   onTap: () {
                     control.releaseValues(updateState);
+                    control.removeHistory(updateState);
                   },
                   child: Row(
                     children: [
@@ -47,6 +49,7 @@ AppBar myAppBar(context, addFuntion, updateState) {
                 PopupMenuItem<String>(
                   onTap: () {
                     control.removeOldItems(updateState);
+                    control.removeHistory(updateState);
                   },
                   child: Row(
                     children: [

@@ -72,6 +72,13 @@ Widget itemsList(context, updateState, getContainerSize) {
                             numberValue--; // Increment the number value
                             Controls.items[key]![0] =
                                 numberValue.toString(); // Update the map
+                            control.saveHistory(
+                                key,
+                                itemValue,
+                                itemValue.toString(),
+                                colorValue,
+                                "decrement",
+                                updateState);
                           });
 
                           // Save the entire map to SharedPreferences
@@ -85,7 +92,7 @@ Widget itemsList(context, updateState, getContainerSize) {
                       child: GestureDetector(
                         onTap: () {
                           changeValueDialog(context, "Edit $key", key,
-                              itemValue, updateState);
+                              itemValue, updateState, colorValue);
                         },
                         child: Text(
                           itemValue,
@@ -103,8 +110,14 @@ Widget itemsList(context, updateState, getContainerSize) {
                         onPressed: () async {
                           updateState(() {
                             numberValue++; // Increment the number value
-                            Controls.items[key]![0] =
-                                numberValue.toString(); // Update the map
+                            Controls.items[key]![0] = numberValue.toString();
+                            control.saveHistory(
+                                key,
+                                itemValue,
+                                itemValue.toString(),
+                                colorValue,
+                                "increment",
+                                updateState); // Update the map
                           });
 
                           // Save the entire map to SharedPreferences

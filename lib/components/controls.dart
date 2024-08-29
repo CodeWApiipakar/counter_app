@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class Controls {
   static Map<String, dynamic> items = {};
+  static List<dynamic> history = [];
   dynamic itemid = "";
   int? itemValue;
   String itemTitle = "Create new item";
@@ -18,7 +19,6 @@ class Controls {
     // Perform the async operation outside of setState
     Map<String, List<dynamic>> existingItems =
         await getItemsFromSharedPreferences();
-
     // Check if the newItemId is not empty and doesn't already exist in the map
     if (newItemId.isNotEmpty && !existingItems.containsKey(newItemId)) {
       // Add the new item to the map
@@ -34,6 +34,70 @@ class Controls {
         getOldItems(updateState);
       });
     }
+  }
+
+// Save to history
+  void saveHistory(String title, dynamic oldValue, dynamic newValue,
+      int Backcolor, String action, Function updateState) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Get existing history
+    List<List<dynamic>> existingItems = await getSavedHistory();
+
+    // Calculate the new value
+    var nv;
+    if (action == "Save" || action == "Update" || action == "add") {
+      nv = int.parse(oldValue) + int.parse(newValue);
+    } else if (action == "increment") {
+      nv = int.parse(oldValue) + 1;
+    } else {
+      nv = int.parse(oldValue) - 1;
+    }
+    // Create new history item
+    List<dynamic> newHistory = [title, oldValue, nv.toString(), Backcolor];
+
+    // Add new history item to the list
+    existingItems.insert(0, newHistory);
+
+    // Convert list to JSON string
+    String jsonItems = jsonEncode(existingItems);
+
+    // Save updated history to SharedPreferences
+    await prefs.setString("history", jsonItems);
+
+    // Load updated history
+    loadHistory(updateState);
+  }
+
+// Load history
+  void loadHistory(Function updateState) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? stringData = prefs.getString('history');
+    if (stringData != null) {
+      List<dynamic> jsonList = jsonDecode(stringData);
+      // Convert List<dynamic> to List<List<dynamic>>
+      List<List<dynamic>> historyList =
+          jsonList.map((item) => List<dynamic>.from(item)).toList();
+      updateState(() {
+        history = historyList;
+      });
+    }
+    print(history);
+  }
+
+// Function to get history from SharedPreferences
+  Future<List<List<dynamic>>> getSavedHistory() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? jsonString = prefs.getString('history');
+    if (jsonString != null) {
+      // Decode the JSON string into a List<dynamic>
+      List<dynamic> list = jsonDecode(jsonString);
+      // Convert List<dynamic> to List<List<dynamic>>
+      return list.map((item) => List<dynamic>.from(item)).toList();
+    }
+    // Return an empty List if no data is found
+    return [];
   }
 
 //============================================ update items
@@ -142,7 +206,6 @@ class Controls {
         items = jsonObject;
       });
     }
-    print("Loaded items from SharedPreferences: ${items}");
   }
 
   //==================================Function to get items from SharedPreferences
@@ -164,11 +227,20 @@ class Controls {
     print(items);
   }
 
+//remove items
   void removeOldItems(updateState) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove("items");
     updateState(() {
       items = {};
+    });
+  }
+
+  void removeHistory(updateState) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove("history");
+    updateState(() {
+      history = [];
     });
   }
 }
