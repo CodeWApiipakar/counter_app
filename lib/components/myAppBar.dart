@@ -1,8 +1,10 @@
 import 'package:counter/components/controls.dart';
+import 'package:counter/screens/history.dart';
+import 'package:counter/screens/owner.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-AppBar myAppBar(addFuntion, updateState) {
+AppBar myAppBar(context, addFuntion, updateState) {
   Controls control = Controls();
   return AppBar(
     automaticallyImplyLeading: false,
@@ -15,7 +17,12 @@ AppBar myAppBar(addFuntion, updateState) {
             icon: Icon(Icons.add_circle),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => History()),
+              );
+            },
             icon: Icon(Icons.history),
           ),
           PopupMenuButton<String>(
@@ -52,6 +59,25 @@ AppBar myAppBar(addFuntion, updateState) {
                             color: Colors.red,
                           )),
                       Text("Delete All"),
+                    ],
+                  ),
+                ),
+                PopupMenuItem<String>(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Aboutme()),
+                    );
+                  },
+                  child: Row(
+                    children: [
+                      IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.info_outline,
+                            color: Colors.green,
+                          )),
+                      Text("Owner"),
                     ],
                   ),
                 ),

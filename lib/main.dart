@@ -77,7 +77,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     return Scaffold(
-        appBar: myAppBar(addNewItem, setState),
+        appBar: myAppBar(context, addNewItem, setState),
         body: Controls.items.isEmpty
             ? const Center(
                 child: Text("Click + icon to add new item"),
