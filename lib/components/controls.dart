@@ -68,9 +68,8 @@ class Controls {
     getOldItems(updateState);
   }
 
-  //============================================ update only value items
-  void updateOnlyValue(String title, String oldValue, String newValue,
-      Function updateState) async {
+//============================================ Release values items
+  void releaseValues(Function updateState) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     Map<String, List<dynamic>> itemsList =
         await getItemsFromSharedPreferences();
@@ -79,12 +78,45 @@ class Controls {
     Map<String, List<dynamic>> updatedItems = {};
 
     itemsList.forEach((key, value) {
+      value[0] = "0";
+      updatedItems[key] = value;
+    });
+
+    // Save the updated map back to shared preferences
+    String jsonItems = jsonEncode(updatedItems);
+    await prefs.setString("items", jsonItems);
+
+    updateState(() {
+      items = updatedItems;
+    });
+    getOldItems(updateState);
+  }
+
+  //============================================ update only value items
+  void updateOnlyValue(
+      String title, int oldValue, int newValue, Function updateState) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Map<String, List<dynamic>> itemsList =
+        await getItemsFromSharedPreferences();
+
+    // Create a new map to store updated items
+    Map<String, List<dynamic>> updatedItems = {};
+    int itemValue = 0;
+
+    itemsList.forEach((key, value) {
       if (key == title) {
         // Update the list for the old key
-        List<dynamic> updatedList = [newValue];
-        updatedItems[title] = updatedList;
+        if (newValue == 0) {
+          itemValue = newValue;
+        } else {
+          itemValue = oldValue + newValue;
+        }
+        // List<dynamic> updatedList = [itemValue];
+        value[0] = itemValue.toString();
+        updatedItems[title] = value;
+        // print(updatedItems);
         // Fetch and update the state again
-        getOldItems(updateState);
+        // getOldItems(updateState);
       } else {
         updatedItems[key] = value;
       }
@@ -132,8 +164,11 @@ class Controls {
     print(items);
   }
 
-  void removeOldItems() async {
+  void removeOldItems(updateState) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove("items");
+    updateState(() {
+      items = {};
+    });
   }
 }

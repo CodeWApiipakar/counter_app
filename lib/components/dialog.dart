@@ -167,7 +167,11 @@ Future<void> dialogBuilder(
                                 Navigator.of(context).pop();
                               }
                             },
-                            child: const Text("Save"),
+                            child: const Text(
+                              "Save",
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.white),
+                            ),
                           ),
                         ),
                       ],

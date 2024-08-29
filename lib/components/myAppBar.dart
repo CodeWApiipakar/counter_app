@@ -1,7 +1,8 @@
 import 'package:counter/components/controls.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-AppBar myAppBar(addFuntion) {
+AppBar myAppBar(addFuntion, updateState) {
   Controls control = Controls();
   return AppBar(
     automaticallyImplyLeading: false,
@@ -18,6 +19,7 @@ AppBar myAppBar(addFuntion) {
             icon: Icon(Icons.history),
           ),
           PopupMenuButton<String>(
+            offset: Offset(0, 40),
             onSelected: (value) {
               // Handle the selected menu item here
               print('Selected: $value');
@@ -25,7 +27,9 @@ AppBar myAppBar(addFuntion) {
             itemBuilder: (BuildContext context) {
               return [
                 PopupMenuItem<String>(
-                  value: 'Option 1',
+                  onTap: () {
+                    control.releaseValues(updateState);
+                  },
                   child: Row(
                     children: [
                       IconButton(onPressed: () {}, icon: Icon(Icons.refresh)),
@@ -34,12 +38,16 @@ AppBar myAppBar(addFuntion) {
                   ),
                 ),
                 PopupMenuItem<String>(
-                  value: 'Option 1',
+                  onTap: () {
+                    control.removeOldItems(updateState);
+                  },
                   child: Row(
                     children: [
                       IconButton(
-                          onPressed: () {},
-                          icon: Icon(
+                          onPressed: () {
+                            // print(Controls.items);
+                          },
+                          icon: const Icon(
                             Icons.delete,
                             color: Colors.red,
                           )),

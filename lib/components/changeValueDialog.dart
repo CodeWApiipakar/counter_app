@@ -4,8 +4,8 @@ import 'package:counter/components/controls.dart';
 import 'package:flutter/material.dart';
 import "dart:math";
 
-Future<void> changeValueDialog(
-    BuildContext context, String itemTitle, String itemValue, updateState) {
+Future<void> changeValueDialog(BuildContext context, String itemTitle,
+    String key, String itemValue, updateState) {
   Controls controls = Controls();
   TextEditingController txtItemValue = TextEditingController();
   TextEditingController txtNewItemValue = TextEditingController();
@@ -52,6 +52,7 @@ Future<void> changeValueDialog(
                         ),
                         SizedBox(height: 20),
                         TextFormField(
+                          keyboardType: TextInputType.number,
                           enabled: true,
                           autofocus: true,
                           controller: txtNewItemValue,
@@ -68,6 +69,32 @@ Future<void> changeValueDialog(
                             ),
                           ),
                         ),
+                        Container(
+                          margin: EdgeInsets.only(top: 20),
+                          width: double.infinity,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: MaterialButton(
+                                  padding: EdgeInsets.all(20),
+                                  color: Colors.deepPurple,
+                                  onPressed: () async {
+                                    controls.updateOnlyValue(
+                                        key,
+                                        int.parse(txtItemValue.text),
+                                        int.parse(txtNewItemValue.text),
+                                        updateState);
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text("Update",
+                                      style: TextStyle(
+                                          fontSize: 18, color: Colors.white)),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
                       ])));
         });
       });

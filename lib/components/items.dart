@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 Widget itemsList(context, updateState, getContainerSize) {
   Controls control = Controls();
+  final isDarkMode = Theme.of(context).brightness == Brightness.dark;
   var screenSize = MediaQuery.of(context).size;
   // print("from items list-------------------------------");
   // print(items);
@@ -38,7 +39,9 @@ Widget itemsList(context, updateState, getContainerSize) {
                   children: [
                     Text(
                       key,
-                      style: TextStyle(fontSize: 20),
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: isDarkMode ? Colors.white : Colors.white),
                     ),
                     IconButton(
                         onPressed: () {
@@ -49,56 +52,67 @@ Widget itemsList(context, updateState, getContainerSize) {
                                 newItemId, newValue, color, updateState);
                           }, colorValue, updateState);
                         },
-                        icon: const Icon(
-                          Icons.edit,
-                        ))
+                        icon: Icon(Icons.edit,
+                            color: isDarkMode ? Colors.white : Colors.white))
                   ],
                 ),
               ),
               Container(
                 height: getContainerSize(Controls.items.length),
-                padding: EdgeInsets.symmetric(horizontal: 20),
+                // padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    IconButton(
-                      onPressed: () async {
-                        updateState(() {
-                          numberValue--; // Increment the number value
-                          Controls.items[key]![0] =
-                              numberValue.toString(); // Update the map
-                        });
+                    Container(
+                      padding: EdgeInsets.only(left: 10),
+                      height: double.infinity,
+                      child: IconButton(
+                        onPressed: () async {
+                          updateState(() {
+                            numberValue--; // Increment the number value
+                            Controls.items[key]![0] =
+                                numberValue.toString(); // Update the map
+                          });
 
-                        // Save the entire map to SharedPreferences
-                        await control.saveToSharedPreferences(Controls.items);
-                      },
-                      icon: Icon(Icons.remove),
+                          // Save the entire map to SharedPreferences
+                          await control.saveToSharedPreferences(Controls.items);
+                        },
+                        icon: Icon(Icons.remove,
+                            color: isDarkMode ? Colors.white : Colors.white),
+                      ),
                     ),
                     Center(
                       child: GestureDetector(
                         onTap: () {
-                          changeValueDialog(context, "Edit Value $key",
+                          changeValueDialog(context, "Edit $key", key,
                               itemValue, updateState);
                         },
                         child: Text(
                           itemValue,
-                          style: const TextStyle(
-                              fontSize: 50, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 65,
+                              fontWeight: FontWeight.bold,
+                              color: isDarkMode ? Colors.white : Colors.white),
                         ),
                       ),
                     ),
-                    IconButton(
-                      onPressed: () async {
-                        updateState(() {
-                          numberValue++; // Increment the number value
-                          Controls.items[key]![0] =
-                              numberValue.toString(); // Update the map
-                        });
+                    Container(
+                      padding: EdgeInsets.only(right: 10),
+                      height: double.infinity,
+                      child: IconButton(
+                        onPressed: () async {
+                          updateState(() {
+                            numberValue++; // Increment the number value
+                            Controls.items[key]![0] =
+                                numberValue.toString(); // Update the map
+                          });
 
-                        // Save the entire map to SharedPreferences
-                        await control.saveToSharedPreferences(Controls.items);
-                      },
-                      icon: const Icon(Icons.add),
+                          // Save the entire map to SharedPreferences
+                          await control.saveToSharedPreferences(Controls.items);
+                        },
+                        icon: Icon(Icons.add,
+                            color: isDarkMode ? Colors.white : Colors.white),
+                      ),
                     ),
                   ],
                 ),
